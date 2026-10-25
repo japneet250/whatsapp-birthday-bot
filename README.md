@@ -31,12 +31,20 @@ The bot logs in to WhatsApp as a **linked device**, the same way WhatsApp Web do
 
 ## Quick start (Docker)
 
+With Docker running, paste this, after changing the password and timezone to your own:
+
 ```bash
 git clone https://github.com/japneet250/whatsapp-birthday-bot.git
 cd whatsapp-birthday-bot
-cp .env.example .env        # set DASHBOARD_PASSWORD and TIMEZONE
-docker compose up -d
+cat > .env <<'EOF'
+DASHBOARD_PASSWORD=pick-a-long-password
+TIMEZONE=America/Toronto
+SEND_TIME=00:00
+EOF
+docker compose up -d --build
 ```
+
+The first build takes a few minutes. More settings are listed in [`.env.example`](.env.example).
 
 1. Open <http://localhost:3000> and sign in with any username and your `DASHBOARD_PASSWORD`.
 2. On your phone: WhatsApp → Settings → Linked devices → Link a device, and scan the QR code on the dashboard.
@@ -77,12 +85,12 @@ Hosting prices and free tiers change often, so check what's current.
 
 ## Without Docker
 
-Requires Node.js 20.12 or newer.
+Requires Node.js 20.12 or newer. `npm install` also downloads the Chromium that whatsapp-web.js drives. Edit `.env` after copying it, and the QR code prints in the terminal as well as on the dashboard.
 
 ```bash
-npm install            # also downloads a Chromium for whatsapp-web.js
+npm install
 cp .env.example .env
-npm start              # QR code prints in the terminal too
+npm start
 ```
 
 To keep it running and restart on reboot, use [pm2](https://pm2.keymetrics.io): `npm i -g pm2 && pm2 start src/index.js --name birthday-bot && pm2 save && pm2 startup`.
@@ -129,11 +137,11 @@ Set these in `.env` or as environment variables.
 
 ## Command line
 
-```bash
-npm run preview          # who's coming up in the next 30 days, and the exact message
-npm run preview -- 90    # next 90 days
-npm run check            # validate birthdays.csv and templates
-```
+| Command | What it does |
+|---|---|
+| `npm run preview` | Who's coming up in the next 30 days, and the exact message each will get |
+| `npm run preview -- 90` | The same for the next 90 days |
+| `npm run check` | Checks `birthdays.csv` and your templates for mistakes |
 
 In Docker: `docker compose exec birthday-bot node src/cli.js preview`.
 
@@ -156,9 +164,11 @@ The dashboard flags failed sends, and the bot retries every 10 minutes, up to 5 
 
 ## Development
 
+`npm run dev` starts the dashboard with WhatsApp off and your data in `./data`.
+
 ```bash
 npm install
-npm run dev     # dashboard only, WhatsApp off, data in ./data
+npm run dev
 npm test
 ```
 
