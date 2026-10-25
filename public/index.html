@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Birthday Bot</title>
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+  <link rel="stylesheet" href="/fonts/gabarito/600.css">
+  <link rel="stylesheet" href="/fonts/gabarito/800.css">
+  <link rel="stylesheet" href="/fonts/atkinson/400.css">
+  <link rel="stylesheet" href="/fonts/atkinson/700.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="/"><span aria-hidden="true">🎂</span> Birthday Bot</a>
+      <button class="link-status" id="link-status" type="button" aria-live="polite">
+        <span class="dot"></span><span class="label">Connecting…</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="hero" aria-live="polite"></section>
+
+    <section class="calendar-section" aria-labelledby="cal-title">
+      <div class="section-head">
+        <div>
+          <h2 id="cal-title">Everyone’s birthdays</h2>
+          <p class="hint" id="cal-sub"></p>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="add-person" type="button">Add person</button>
+          <label class="btn" for="import-file">Import CSV</label>
+          <input type="file" id="import-file" accept=".csv,text/csv" hidden>
+          <a class="btn" href="/api/export.csv" download>Export CSV</a>
+        </div>
+      </div>
+      <div class="problems" id="problems" hidden></div>
+      <ol class="calendar" id="calendar"></ol>
+    </section>
+
+    <section class="templates-section" aria-labelledby="tpl-title">
+      <div class="section-head">
+        <div>
+          <h2 id="tpl-title">Messages</h2>
+          <p class="hint">Each person gets one of these, unless you wrote them a custom message. Use
+            <code>{first}</code>, <code>{name}</code>, <code>{age}</code>, <code>{ordinal}</code><span id="extra-vars"></span>.
+            Messages that need a birth year are skipped for people without one.</p>
+        </div>
+      </div>
+      <form id="templates-form">
+        <ul class="templates" id="templates"></ul>
+        <div class="actions">
+          <button class="btn" type="button" id="add-template">Add a message</button>
+          <button class="btn primary" type="submit">Save messages</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="history-section" aria-labelledby="hist-title">
+      <h2 id="hist-title">Recently sent</h2>
+      <ul class="history" id="history"></ul>
+    </section>
+  </main>
+
+  <footer class="wrap foot" id="foot"></footer>
+
+  <dialog id="person-dialog" aria-labelledby="pd-title">
+    <form method="dialog" id="person-form" novalidate>
+      <h2 id="pd-title">Add person</h2>
+      <label>Name
+        <input name="name" required autocomplete="off" placeholder="Jordan Smith">
+      </label>
+      <label>WhatsApp number
+        <input name="phone" required inputmode="tel" autocomplete="off" placeholder="+1 416 555 0101">
+        <small>Include the country code. Canada and the US start with 1.</small>
+      </label>
+      <fieldset class="bday">
+        <legend>Birthday</legend>
+        <label>Month
+          <select name="month" required></select>
+        </label>
+        <label>Day
+          <input name="day" type="number" min="1" max="31" required inputmode="numeric">
+        </label>
+        <label><span>Year <span class="opt">optional</span></span>
+          <input name="year" type="number" min="1900" max="2100" inputmode="numeric" placeholder="1999">
+        </label>
+      </fieldset>
+      <label><span>Their timezone <span class="opt">optional</span></span>
+        <input name="timezone" list="tz-list" autocomplete="off" placeholder="Same as yours">
+        <small>Set this for friends abroad so the message lands at midnight their time.</small>
+      </label>
+      <datalist id="tz-list"></datalist>
+      <label><span>Custom message <span class="opt">optional</span></span>
+        <textarea name="message" rows="3" placeholder="Leave empty to use one of your messages"></textarea>
+      </label>
+      <div class="extra-fields" id="extra-fields"></div>
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="btn danger" type="button" id="delete-person" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button class="btn" type="button" value="cancel" id="cancel-person">Cancel</button>
+        <button class="btn primary" type="submit" id="save-person">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="link-dialog" aria-labelledby="ld-title">
+    <form method="dialog">
+      <h2 id="ld-title">WhatsApp</h2>
+      <p id="ld-body"></p>
+      <div class="dialog-actions">
+        <button class="btn danger" type="button" id="logout">Unlink this device</button>
+        <span class="spacer"></span>
+        <button class="btn primary" value="close">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

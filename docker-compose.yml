@@ -1,0 +1,14 @@
+services:
+  birthday-bot:
+    build: .
+    image: whatsapp-birthday-bot
+    container_name: birthday-bot
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - bot-data:/data
+
+volumes:
+  bot-data:
