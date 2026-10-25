@@ -1,0 +1,25 @@
+# Server add-on: puts the dashboard behind HTTPS and stops exposing plain-HTTP port 3000.
+# Used by setup-vps.sh:
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.vps.yml up -d --build
+services:
+  birthday-bot:
+    ports: !reset []
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - birthday-bot
+
+volumes:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,6 @@
+# HTTPS in front of the dashboard. Caddy gets a free certificate automatically.
+# DOMAIN comes from .env (setup-vps.sh sets it to <your-ip>.sslip.io if you don't have a domain).
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy birthday-bot:3000
+}

@@ -59,15 +59,21 @@ docker run -d --name birthday-bot --restart unless-stopped \
 
 The bot has to be awake at midnight, so run it somewhere that is always on. It needs a **persistent disk mounted at `/data`** (that's where the WhatsApp login and your list live) and about **1 GB of RAM** (Chromium).
 
+**Free:** [host it on Oracle Cloud's Always Free tier](docs/free-hosting.md) with a step-by-step guide and a one-command installer that also sets up HTTPS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/japneet250/whatsapp-birthday-bot/main/deploy/setup-vps.sh | TIMEZONE=America/Toronto bash
+```
+
 | Where | How |
 |---|---|
-| Any VPS or home server (Oracle Cloud free tier, Hetzner, DigitalOcean, a Raspberry Pi) | Install Docker, then follow the quick start. The image is built for amd64 and arm64. |
+| Any Ubuntu/Debian server (Oracle Cloud, Google Cloud, Hetzner, DigitalOcean, a Raspberry Pi) | Run the installer above. It sets up Docker, HTTPS and a password for you. The image works on amd64 and arm64. |
 | [Railway](https://railway.com) | New project → Deploy from GitHub repo (it finds the Dockerfile). Add a volume mounted at `/data`, set `DASHBOARD_PASSWORD` and `TIMEZONE`, then generate a public domain. |
 | [Fly.io](https://fly.io) | See [`deploy/fly.toml`](deploy/fly.toml) for the commands. |
 
 Hosting prices and free tiers change often, so check what's current.
 
-**Keep the dashboard private.** Anyone who gets in can message people as you. Use a long password and only expose the dashboard over HTTPS (Railway and Fly do this for you). On a VPS, put it behind Caddy, a Cloudflare Tunnel or Tailscale, or bind it to localhost only with `ports: ["127.0.0.1:3000:3000"]`.
+**Keep the dashboard private.** Anyone who gets in can message people as you. Use a long password and only expose the dashboard over HTTPS. The installer, Railway and Fly all do this for you. If you set up a server by hand, put it behind Caddy, a Cloudflare Tunnel or Tailscale, or bind it to localhost only with `ports: ["127.0.0.1:3000:3000"]`.
 
 ## Without Docker
 
